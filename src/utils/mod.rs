@@ -1,10 +1,9 @@
 pub mod reg_utils;
 pub mod vec_actions;
-use std::collections::HashMap;
+pub mod reg_actions;
 
 use crate::traits::*;
 use crate::utils::VecActions;
-
 use itertools::Itertools;
 pub enum MergeActions {
     Multiply,
@@ -15,49 +14,43 @@ pub enum MergeActions {
 }
 
 #[derive(Clone, Debug)]
-pub struct RegStruct<T>{
-    pub vector: Vec<T>,
-    pub squared_vector: Vec<T>,
+pub struct RegStruct {
+    pub vector: Vec<f32>,
+    pub squared_vector: Vec<f32>,
     pub dependent: bool,
     pub mean: f32,
-    pub length: T,
-    pub sum: T,
-    pub median: T,
-    pub mode: T,
+    pub length: f32,
+    pub sum: f32,
+    pub median: f32,
+    pub mode: f32,
     pub variance: f32,
     pub std_dev: f32,
-    pub sum_of_squared: T,
-    pub min: T,
-    pub max: T,
+    pub sum_of_squared: f32,
+    pub min: f32,
+    pub max: f32,
 }
 
-impl RegActions<f32> for RegStruct<f32> {
-    fn simple_reg(&self, x_1: &RegStruct<f32>) -> (f32, f32) {
-        let sum_xy = self.vector.vec_merge(&x_1.vector, MergeActions::Multiply).sum_of_vec();
-        let count = self.vector.len() as f32;
-
-        let b_0 = (self.sum*x_1.sum_of_squared - x_1.sum*sum_xy) / (count*x_1.sum_of_squared - x_1.sum.powf(2.0));
-        let b_1 = (count*sum_xy - x_1.sum*self.sum) / (count*x_1.sum_of_squared - x_1.sum.powf(2.0));
-
-        println!("Y = {b_0} + {b_1}*X");
-        (b_0, b_1)
-    }
+#[derive(Debug, Clone)]
+pub struct RegVec {
+    pub dependent: RegStruct,
+    pub independent: Vec<RegStruct>,
+    independent_count: usize,
 }
 
-impl RegActions<i64> for RegStruct<i64> {
-    fn simple_reg(&self, x_1: &RegStruct<i64>) -> (f32, f32) {
-        let sum_xy = self.vector.vec_merge(&x_1.vector, MergeActions::Multiply).sum_of_vec() as f32;
-        let count = self.vector.len() as f32;
-        let sum_y = self.sum as f32;
-        let sum_x = x_1.sum as f32;
-        let sum_x_squared = x_1.sum_of_squared as f32;
-
-
-
-        let b_0: f32 = (sum_y*sum_x_squared - sum_x*sum_xy) / (count*sum_x_squared - sum_x.powf(2.0));
-        let b_1: f32 = (count*sum_xy - sum_x*sum_y) / (count*sum_x_squared - sum_x.powf(2.0));
-
-        println!("Y = {b_0} + {b_1}*X");
-        (b_0, b_1)
+impl RegVec {
+    pub fn new(dependent: RegStruct, independent: Vec<RegStruct>) -> Self {
+        let independent_count = independent.len();
+        RegVec {
+            dependent,
+            independent,
+            independent_count
+        }
     }
+    pub fn independent_count(&self) -> usize {
+        self.independent_count
+    }
+
+    pub fn simple_reg(&self) -> (f32, f32) {
+        self.dependent.simple_reg(&self.independent[0])
+    }    
 }

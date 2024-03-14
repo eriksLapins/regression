@@ -1,6 +1,9 @@
 
 use crate::utils::*;
 use crate::traits::VecActions;
+use std::collections::HashMap;
+
+use self::reg_utils::RegTypes;
 
 impl VecActions<f32> for Vec<f32> {
     fn sum_of_vec(&self) -> f32 {
@@ -72,6 +75,9 @@ impl VecActions<f32> for Vec<f32> {
     fn vec_std_dev(&self) -> f32 {
         let clone = self.clone();
         clone.vec_variance().sqrt()
+    }
+    fn to_regtypes(&self) -> Vec<reg_utils::RegTypes> {
+        self.into_iter().map(|x| RegTypes::Float(*x)).collect_vec()
     }
 }
 
@@ -146,6 +152,9 @@ impl VecActions<f64> for Vec<f64> {
         let clone = self.clone();
         clone.vec_variance().sqrt()
     }
+    fn to_regtypes(&self) -> Vec<reg_utils::RegTypes> {
+        self.into_iter().map(|x| RegTypes::BigFloat(*x)).collect_vec()
+    }
 }
 
 impl VecActions<i64> for Vec<i64> {
@@ -218,5 +227,9 @@ impl VecActions<i64> for Vec<i64> {
     fn vec_std_dev(&self) -> f32 {
         let clone = self.clone();
         clone.vec_variance().sqrt()
+    }
+    
+    fn to_regtypes(&self) -> Vec<reg_utils::RegTypes> {
+        self.into_iter().map(|x| RegTypes::Int(*x)).collect_vec()
     }
 }

@@ -1,6 +1,6 @@
-use crate::utils::{MergeActions, RegStruct};
-pub trait RegActions<T> {
-    fn simple_reg(&self, x_1: &RegStruct<T>) -> (f32, f32);
+use crate::utils::{reg_utils::RegTypes, MergeActions, RegStruct};
+pub trait RegActions {
+    fn simple_reg(&self, x_1: &RegStruct) -> (f32, f32);
 }
 
 
@@ -13,6 +13,7 @@ pub trait VecActions<T> {
     fn vec_mode(&self) -> T;
     fn vec_variance(&self) -> f32;
     fn vec_std_dev(&self) -> f32;
+    fn to_regtypes(&self) -> Vec<RegTypes>;
 }
 
 pub trait RegUtils<T> {

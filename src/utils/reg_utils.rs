@@ -1,58 +1,24 @@
-use crate::utils::{RegStruct, RegUtils};
+use crate::utils::RegStruct;
 
 use super::VecActions;
 
-impl RegUtils<i64> for RegStruct<i64> {
-    fn new(data: &Vec<i64>, dependent: bool) -> Self {
-        let vector = Vec::from(data.clone());
-        let length = vector.len();
-        let mean = vector.mean_of_vec();
-        let sum = vector.sum_of_vec();
-        let mode = vector.vec_mode();
-        let median = vector.vec_median();
-        let variance = vector.vec_variance();
-        let std_dev = vector.vec_std_dev();
-        let squared_vector = vector.square_vec_values();
-        let sum_of_squared = squared_vector.sum_of_vec();
-        let min = vector.iter().min().unwrap().clone();
-        let max = vector.iter().max().unwrap().clone();
-        RegStruct {
-            vector,
-            squared_vector,
-            dependent,
-            length: length as i64,
-            mean,
-            median,
-            std_dev,
-            mode,
-            variance,
-            sum,
-            sum_of_squared,
-            min,
-            max
-        }
-    }
-    fn is_dependent(&self) -> bool {
-        self.dependent
-    }
-    fn summarize(&self) {
-        println!("Data i64 {:?}", self.vector);
-        println!("Mean: {}", self.mean);
-        println!("Median: {}", self.median);
-        println!("Mode: {}", self.mode);
-        println!("Standard deviation: {}", self.std_dev);
-        println!("Variance: {}", self.variance);
-        println!("Sum: {}", self.sum);
-        println!("Mean: {}", self.mean);
-        println!("Min: {}", self.min);
-        println!("Max: {}", self.max);
-    }
+pub enum RegTypes {
+    Int(i64),
+    Float(f32),
+    BigFloat(f64),
 }
 
-impl RegUtils<f32> for RegStruct<f32> {
-    fn new(data: &Vec<f32>, dependent: bool) -> Self {
-        let vector = Vec::from(data.clone());
-        let length = vector.len();
+impl RegStruct {
+    pub fn new(data: &Vec<RegTypes>, dependent: bool) -> Self {
+        let mut vector: Vec<f32> = Vec::new();
+        for i in 0..data.len() {
+            match data[i] {
+                RegTypes::Float(item) => vector.push(item),
+                RegTypes::BigFloat(item) => vector.push(item as f32),
+                RegTypes::Int(item) => vector.push(item as f32),
+            }
+        };
+        let length = vector.len() as f32;
         let mean = vector.mean_of_vec();
         let sum = vector.sum_of_vec();
         let mode = vector.vec_mode();
@@ -67,7 +33,7 @@ impl RegUtils<f32> for RegStruct<f32> {
             vector,
             squared_vector,
             dependent,
-            length: length as f32,
+            length,
             mean,
             median,
             std_dev,
@@ -79,11 +45,13 @@ impl RegUtils<f32> for RegStruct<f32> {
             max
         }
     }
-    fn is_dependent(&self) -> bool {
+
+    pub fn is_dependent(&self) -> bool {
         self.dependent
     }
-    fn summarize(&self) {
-        println!("Data f32 {:?}", self.vector);
+
+    pub fn summarize(&self) {
+        println!("Data {:?}", self.vector);
         println!("Mean: {}", self.mean);
         println!("Median: {}", self.median);
         println!("Mode: {}", self.mode);
