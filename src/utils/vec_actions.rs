@@ -79,6 +79,12 @@ impl VecActions<f32> for Vec<f32> {
     fn to_regtypes(&self) -> Vec<reg_utils::RegTypes> {
         self.into_iter().map(|x| RegTypes::Float(*x)).collect_vec()
     }
+    fn vec_max(&self) -> f32 {
+        self.iter().max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap().clone()
+    }
+    fn vec_min(&self) -> f32 {
+        self.iter().min_by(|a, b| a.partial_cmp(b).unwrap()).unwrap().clone()
+    }
 }
 
 impl VecActions<f64> for Vec<f64> {
@@ -154,6 +160,12 @@ impl VecActions<f64> for Vec<f64> {
     }
     fn to_regtypes(&self) -> Vec<reg_utils::RegTypes> {
         self.into_iter().map(|x| RegTypes::BigFloat(*x)).collect_vec()
+    }
+    fn vec_max(&self) -> f32 {
+        self.iter().max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap().clone() as f32
+    }
+    fn vec_min(&self) -> f32 {
+        self.iter().min_by(|a, b| a.partial_cmp(b).unwrap()).unwrap().clone() as f32
     }
 }
 
@@ -231,5 +243,11 @@ impl VecActions<i64> for Vec<i64> {
     
     fn to_regtypes(&self) -> Vec<reg_utils::RegTypes> {
         self.into_iter().map(|x| RegTypes::Int(*x)).collect_vec()
+    }
+    fn vec_max(&self) -> f32 {
+        self.iter().max().unwrap().clone() as f32
+    }
+    fn vec_min(&self) -> f32 {
+        self.iter().min().unwrap().clone() as f32
     }
 }

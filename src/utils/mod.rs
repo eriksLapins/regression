@@ -5,6 +5,7 @@ pub mod reg_actions;
 use crate::traits::*;
 use crate::utils::VecActions;
 use itertools::Itertools;
+use nalgebra::{DMatrix, Matrix};
 pub enum MergeActions {
     Multiply,
     Power,
@@ -15,6 +16,7 @@ pub enum MergeActions {
 
 #[derive(Clone, Debug)]
 pub struct RegStruct {
+    pub name: String,
     pub vector: Vec<f32>,
     pub squared_vector: Vec<f32>,
     pub dependent: bool,
@@ -52,5 +54,51 @@ impl RegVec {
 
     pub fn simple_reg(&self) -> (f32, f32) {
         self.dependent.simple_reg(&self.independent[0])
-    }    
+    }
+
+    fn to_matrix_vec(&self, vector: &Vec<Vec<f32>>, width: usize) -> Vec<f32> {
+        let mut new_vec = vec![];
+
+        for i in 0..width {
+            new_vec.append(& mut vector[i].clone());
+        }
+
+        new_vec
+    }
+
+    fn into_matrix(&self, vector: &Vec<Vec<f32>>) -> Matrix<f32, nalgebra::Dyn, nalgebra::Dyn, nalgebra::VecStorage<f32, nalgebra::Dyn, nalgebra::Dyn>> {
+        let width = vector.len();
+        let height = vector[0].len();
+        
+        let new_vec = self.to_matrix_vec(vector, width);
+        DMatrix::from_vec(height, width, new_vec)
+    }
+
+    fn matrix_to_vec(&self, matrix: Matrix<f32, nalgebra::Dyn, nalgebra::Dyn, nalgebra::VecStorage<f32, nalgebra::Dyn, nalgebra::Dyn>>) -> Vec<Vec<f32>> {
+        let height = matrix.nrows();
+        let vector = matrix.into_iter().map(|row| row.to_owned()).collect_vec();
+
+        let split: Vec<Vec<f32>> = vector.chunks(height).map(|vec| vec.into()).collect_vec();
+        split
+    }   
+    
+    pub fn calc_betas(&self) -> Vec<Vec<f32>> {
+        let width = self.independent_count();
+        let height = self.independent[0].vector.len();
+        let one_col: Vec<f32> = vec![1.0; height];
+        let mut reg_vec = vec![one_col];
+        for i in 0..width {
+            reg_vec.push(self.independent[i].vector.clone())
+        };
+        let dependent_vec = self.dependent.vector.clone();
+        let y = self.into_matrix(&vec![dependent_vec]);
+        let x = self.into_matrix(&reg_vec);
+        let xt = x.transpose();
+        let xt_x = &xt * &x;
+        let xt_x_inverse = xt_x.clone().try_inverse().unwrap();
+        let xt_y = &xt * &y;
+        let betas = &xt_x_inverse * xt_y;
+        let return_betas = self.matrix_to_vec(betas);
+        return_betas
+    }
 }

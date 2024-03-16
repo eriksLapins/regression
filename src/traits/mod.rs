@@ -14,6 +14,8 @@ pub trait VecActions<T> {
     fn vec_variance(&self) -> f32;
     fn vec_std_dev(&self) -> f32;
     fn to_regtypes(&self) -> Vec<RegTypes>;
+    fn vec_max(&self) -> f32;
+    fn vec_min(&self) -> f32;
 }
 
 pub trait RegUtils<T> {

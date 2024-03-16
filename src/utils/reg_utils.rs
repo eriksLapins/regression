@@ -9,7 +9,7 @@ pub enum RegTypes {
 }
 
 impl RegStruct {
-    pub fn new(data: &Vec<RegTypes>, dependent: bool) -> Self {
+    pub fn new(data: &Vec<RegTypes>, name: &str, dependent: bool) -> Self {
         let mut vector: Vec<f32> = Vec::new();
         for i in 0..data.len() {
             match data[i] {
@@ -18,6 +18,7 @@ impl RegStruct {
                 RegTypes::Int(item) => vector.push(item as f32),
             }
         };
+        let name = String::from(name);
         let length = vector.len() as f32;
         let mean = vector.mean_of_vec();
         let sum = vector.sum_of_vec();
@@ -27,9 +28,10 @@ impl RegStruct {
         let std_dev = vector.vec_std_dev();
         let squared_vector = vector.square_vec_values();
         let sum_of_squared = squared_vector.sum_of_vec();
-        let min = vector.iter().min_by(|a, b| a.partial_cmp(b).unwrap()).unwrap().clone();
-        let max = vector.iter().max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap().clone();
+        let min = vector.vec_max();
+        let max = vector.vec_min();
         RegStruct {
+            name,
             vector,
             squared_vector,
             dependent,
@@ -51,6 +53,7 @@ impl RegStruct {
     }
 
     pub fn summarize(&self) {
+        println!("Name: {}", self.name);
         println!("Data {:?}", self.vector);
         println!("Mean: {}", self.mean);
         println!("Median: {}", self.median);
