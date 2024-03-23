@@ -8,15 +8,16 @@ pub enum VecFillMethod {
     // DeleteRow,
     FillMedian,
     FillAvg,
+    // Should only use this if you do not have unique values
     FillMode,
     // BackFill,
     // FrontFill,
 }
 
 pub trait VecActions<T> {
-    fn sum_of_vec(&self) -> T;
-    fn mean_of_vec(&self) -> f32;
-    fn square_vec_values(&self) -> Vec<T>;
+    fn vec_sum(&self) -> T;
+    fn vec_mean(&self) -> f32;
+    fn vec_value_squares(&self) -> Vec<T>;
     fn vec_merge(&self, vec_2: &Vec<T>, action: MergeActions) -> Vec<T>;
     fn vec_median(&self) -> T;
     fn vec_mode(&self) -> T;

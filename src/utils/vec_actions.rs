@@ -6,17 +6,17 @@ use std::collections::HashMap;
 use self::reg_utils::RegTypes;
 
 impl VecActions<f32> for Vec<f32> {
-    fn sum_of_vec(&self) -> f32 {
+    fn vec_sum(&self) -> f32 {
         let number = self.clone().into_iter().map(|v| v).sum::<f32>();
         number as f32
     }
-    fn mean_of_vec(&self) -> f32 {
-        let sum = self.sum_of_vec();
+    fn vec_mean(&self) -> f32 {
+        let sum = self.vec_sum();
         let count: f32 = self.len() as f32;
         let mean = sum / count;
         mean
     }
-    fn square_vec_values(&self) -> Vec<f32> {
+    fn vec_value_squares(&self) -> Vec<f32> {
         let cloned = self.clone();
         let numbers = cloned.iter().map(|number| number.powf(2.0) as f32);
         numbers.collect_vec()   
@@ -68,7 +68,7 @@ impl VecActions<f32> for Vec<f32> {
     }
     fn vec_variance(&self) -> f32 {
         let clone = self.clone();
-        let mean = clone.mean_of_vec();
+        let mean = clone.vec_mean();
         let numerator: f32 = clone.into_iter().map(|num| (num - mean).powf(2.0)).sum();
         numerator / self.len() as f32
     }
@@ -88,17 +88,17 @@ impl VecActions<f32> for Vec<f32> {
 }
 
 impl VecActions<f64> for Vec<f64> {
-    fn sum_of_vec(&self) -> f64 {
+    fn vec_sum(&self) -> f64 {
         let number = self.clone().into_iter().map(|v| v).sum::<f64>();
         number as f64
     }
-    fn mean_of_vec(&self) -> f32 {
-        let sum = self.sum_of_vec() as f32;
+    fn vec_mean(&self) -> f32 {
+        let sum = self.vec_sum() as f32;
         let count: f32 = self.len() as f32;
         let mean = sum / count;
         mean
     }
-    fn square_vec_values(&self) -> Vec<f64> {
+    fn vec_value_squares(&self) -> Vec<f64> {
         let cloned = self.clone();
         let numbers = cloned.iter().map(|number| number.powf(2.0) as f64);
         numbers.collect_vec()   
@@ -150,7 +150,7 @@ impl VecActions<f64> for Vec<f64> {
     }
     fn vec_variance(&self) -> f32 {
         let clone = self.clone();
-        let mean = clone.mean_of_vec() as f32;
+        let mean = clone.vec_mean() as f32;
         let numerator: f32 = clone.into_iter().map(|num| ((num as f32) - mean).powf(2.0)).sum();
         numerator / self.len() as f32
     }
@@ -170,17 +170,17 @@ impl VecActions<f64> for Vec<f64> {
 }
 
 impl VecActions<i64> for Vec<i64> {
-    fn sum_of_vec(&self) -> i64 {
+    fn vec_sum(&self) -> i64 {
         let number = self.clone().into_iter().map(|v| v).sum::<i64>();
         number
     }
-    fn mean_of_vec(&self) -> f32 {
-        let sum = self.sum_of_vec() as f32;
+    fn vec_mean(&self) -> f32 {
+        let sum = self.vec_sum() as f32;
         let count: f32 = self.len() as f32;
         let mean = sum / count;
         mean
     }
-    fn square_vec_values(&self) -> Vec<i64> {
+    fn vec_value_squares(&self) -> Vec<i64> {
         let cloned = self.clone();
         let numbers = cloned.iter().map(|number| number.pow(2));
         numbers.collect_vec()   
@@ -232,7 +232,7 @@ impl VecActions<i64> for Vec<i64> {
     }
     fn vec_variance(&self) -> f32 {
         let clone = self.clone();
-        let mean = clone.mean_of_vec();
+        let mean = clone.vec_mean();
         let numerator: f32 = clone.into_iter().map(|num| (num as f32 - mean).powf(2.0)).sum();
         numerator / self.len() as f32
     }
@@ -253,7 +253,7 @@ impl VecActions<i64> for Vec<i64> {
 }
 
 impl VecActions<f32> for Vec<Option<f32>> {
-    fn sum_of_vec(&self) -> f32 {
+    fn vec_sum(&self) -> f32 {
         let mut clean_vec: Vec<f32> = Vec::new();
         for i in 0..self.len() {
             match self[i] {
@@ -264,7 +264,7 @@ impl VecActions<f32> for Vec<Option<f32>> {
         let number = clean_vec.into_iter().map(|v| v).sum::<f32>();
         number as f32
     }
-    fn mean_of_vec(&self) -> f32 {
+    fn vec_mean(&self) -> f32 {
         let mut clean_vec: Vec<f32> = Vec::new();
         for i in 0..self.len() {
             match self[i] {
@@ -272,12 +272,12 @@ impl VecActions<f32> for Vec<Option<f32>> {
                 None => ()
             }
         } 
-        let sum = self.sum_of_vec();
+        let sum = self.vec_sum();
         let count: f32 = clean_vec.len() as f32;
         let mean = sum / count;
         mean
     }
-    fn square_vec_values(&self) -> Vec<f32> {
+    fn vec_value_squares(&self) -> Vec<f32> {
         panic!("Squaring vector values is only supported for Vec<T> not Vec<Option<T>> types"); 
     }
     fn vec_merge(&self, _vec_2: &Vec<f32>, _action: MergeActions) -> Vec<f32> {
@@ -334,7 +334,7 @@ impl VecActions<f32> for Vec<Option<f32>> {
                 Some(value) => RegTypes::Float(*value),
                 None => {
                     match method {
-                        VecFillMethod::FillAvg => RegTypes::Float(self.mean_of_vec()),
+                        VecFillMethod::FillAvg => RegTypes::Float(self.vec_mean()),
                         VecFillMethod::FillMedian => RegTypes::Float(self.vec_median()),
                         VecFillMethod::FillMode => RegTypes::Float(self.vec_mode()),
                         VecFillMethod::None => panic!("No method provided for filling in or removing values")  
@@ -366,7 +366,7 @@ impl VecActions<f32> for Vec<Option<f32>> {
 }
 
 impl VecActions<i64> for Vec<Option<i64>> {
-    fn sum_of_vec(&self) -> i64 {
+    fn vec_sum(&self) -> i64 {
         let mut clean_vec: Vec<i64> = Vec::new();
         for i in 0..self.len() {
             match self[i] {
@@ -377,7 +377,7 @@ impl VecActions<i64> for Vec<Option<i64>> {
         let number = clean_vec.into_iter().map(|v| v).sum::<i64>();
         number
     }
-    fn mean_of_vec(&self) -> f32 {
+    fn vec_mean(&self) -> f32 {
         let mut clean_vec: Vec<i64> = Vec::new();
         for i in 0..self.len() {
             match self[i] {
@@ -385,12 +385,12 @@ impl VecActions<i64> for Vec<Option<i64>> {
                 None => ()
             }
         } 
-        let sum = self.sum_of_vec() as f32;
+        let sum = self.vec_sum() as f32;
         let count: f32 = clean_vec.len() as f32;
         let mean = sum / count;
         mean
     }
-    fn square_vec_values(&self) -> Vec<i64> {
+    fn vec_value_squares(&self) -> Vec<i64> {
         panic!("Squaring vector values is only supported for Vec<T> not Vec<Option<T>> types"); 
     }
     fn vec_merge(&self, _vec_2: &Vec<i64>, _action: MergeActions) -> Vec<i64> {
@@ -447,7 +447,7 @@ impl VecActions<i64> for Vec<Option<i64>> {
                 Some(value) => RegTypes::Int(*value),
                 None => {
                     match method {
-                        VecFillMethod::FillAvg => RegTypes::Int(self.mean_of_vec().round() as i64),
+                        VecFillMethod::FillAvg => RegTypes::Int(self.vec_mean().round() as i64),
                         VecFillMethod::FillMedian => RegTypes::Int(self.vec_median()),
                         VecFillMethod::FillMode => RegTypes::Int(self.vec_mode()),
                         VecFillMethod::None => panic!("No method provided for filling in or removing values")  

@@ -21,14 +21,14 @@ impl RegStruct {
         };
         let name = String::from(name);
         let length = vector.len() as f32;
-        let mean = vector.mean_of_vec();
-        let sum = vector.sum_of_vec();
+        let mean = vector.vec_mean();
+        let sum = vector.vec_sum();
         let mode = vector.vec_mode();
         let median = vector.vec_median();
         let variance = vector.vec_variance();
         let std_dev = vector.vec_std_dev();
-        let squared_vector = vector.square_vec_values();
-        let sum_of_squared = squared_vector.sum_of_vec();
+        let squared_vector = vector.vec_value_squares();
+        let sum_of_squared = squared_vector.vec_sum();
         let min = vector.vec_min();
         let max = vector.vec_max();
 
