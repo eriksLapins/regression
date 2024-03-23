@@ -3,6 +3,15 @@ pub trait RegActions {
     fn simple_reg(&self, x_1: &RegStruct) -> (f32, f32);
 }
 
+pub enum VecFillMethod {
+    None,
+    // DeleteRow,
+    FillMedian,
+    FillAvg,
+    FillMode,
+    // BackFill,
+    // FrontFill,
+}
 
 pub trait VecActions<T> {
     fn sum_of_vec(&self) -> T;
@@ -13,9 +22,9 @@ pub trait VecActions<T> {
     fn vec_mode(&self) -> T;
     fn vec_variance(&self) -> f32;
     fn vec_std_dev(&self) -> f32;
-    fn to_regtypes(&self) -> Vec<RegTypes>;
-    fn vec_max(&self) -> f32;
-    fn vec_min(&self) -> f32;
+    fn to_regtypes(&self, method: VecFillMethod) -> Vec<RegTypes>;
+    fn vec_max(&self) -> T;
+    fn vec_min(&self) -> T;
 }
 
 pub trait RegUtils<T> {

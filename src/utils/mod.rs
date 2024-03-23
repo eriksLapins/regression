@@ -82,7 +82,7 @@ impl RegVec {
         split
     }   
     
-    pub fn calc_betas(&self) -> Vec<Vec<f32>> {
+    pub fn calc_betas(&self) -> Vec<f32> {
         let width = self.independent_count();
         let height = self.independent[0].vector.len();
         let one_col: Vec<f32> = vec![1.0; height];
@@ -99,6 +99,34 @@ impl RegVec {
         let xt_y = &xt * &y;
         let betas = &xt_x_inverse * xt_y;
         let return_betas = self.matrix_to_vec(betas);
-        return_betas
+
+        return_betas[0].clone()
+    }
+
+    pub fn read_betas(&self) -> () {
+        let betas = self.calc_betas();
+        for i in 0..betas.len() {
+            if i == 0 {
+                println!("base {} (b{}): {}", self.dependent.name, i, betas[i]);
+            } else {
+                println!("{} (b{}): {}", self.independent[i-1].name, i, betas[i])
+            }
+        }
+    }
+
+    pub fn predict(&self, inputs: Vec<f32>) -> std::io::Result<f32> {
+        if inputs.len() < self.independent_count {
+            panic!("Not enough inputs, expected {}, got {}", self.independent_count, inputs.len());
+        } else if inputs.len() > self.independent_count {
+            panic!("Too many inputs, expected {}, got {}", self.independent_count, inputs.len());
+        } else {
+            let betas = self.calc_betas();
+            let mut result: f32 = betas[0];
+            for i in 1..betas.len() {
+                result += inputs[i-1]*betas[i];
+            }
+    
+            Ok(result)
+        }
     }
 }

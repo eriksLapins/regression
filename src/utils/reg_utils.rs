@@ -2,6 +2,7 @@ use crate::utils::RegStruct;
 
 use super::VecActions;
 
+#[derive(Debug)]
 pub enum RegTypes {
     Int(i64),
     Float(f32),
@@ -28,8 +29,9 @@ impl RegStruct {
         let std_dev = vector.vec_std_dev();
         let squared_vector = vector.square_vec_values();
         let sum_of_squared = squared_vector.sum_of_vec();
-        let min = vector.vec_max();
-        let max = vector.vec_min();
+        let min = vector.vec_min();
+        let max = vector.vec_max();
+
         RegStruct {
             name,
             vector,
